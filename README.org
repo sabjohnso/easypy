@@ -1,0 +1,2 @@
+#+TITLE: easypy
+#+SUBTITLE: automatic python binding
