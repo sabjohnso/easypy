@@ -1,0 +1,9 @@
+import sys
+sys.path.append("${CMAKE_CURRENT_BINARY_DIR}")
+import introspective_binding_test
+
+def test_nothing():
+    pass
+
+
+

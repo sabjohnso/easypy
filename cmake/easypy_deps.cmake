@@ -6,3 +6,8 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/cmake_utilities/FindCMakeUtilities.cmake)
 endif()
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_utilities)
 find_package(CMakeUtilities)
+
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module)
+find_package(pybind11 REQUIRED)
+find_package(introspection REQUIRED)
+find_package(easyj REQUIRED)
