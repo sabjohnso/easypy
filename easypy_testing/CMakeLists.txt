@@ -7,7 +7,7 @@ macro(easypy_add_test test_name)
   configure_file(${python_name}.in ${python_name})
 
   add_library(${lib_name} SHARED ${test_name}_test.cpp)
-  target_link_libraries(${lib_name} PRIVATE easypy::header pybind11::headers Python3::Module)
+  target_link_libraries(${lib_name} PRIVATE easypy::header pybind11::headers Python3::Module pfr::header)
   set_target_properties(${lib_name}
     PROPERTIES
     CXX_STANDARD ${easypy_CXX_STANDARD}
