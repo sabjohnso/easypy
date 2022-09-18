@@ -1,18 +1,22 @@
 import sys
 sys.path.append("${CMAKE_CURRENT_BINARY_DIR}")
 import introspective_binding_test
+from introspective_binding_test import Point
 
 def test_introspective_binding():
-    from introspective_binding_test import Point
-    p = Point(3, 4);
+    p = Point(3, 4)
     assert p.x == 3
     assert p.y == 4
-
     p.x = 5
     p.y = 6
-
     assert p.x == 5
     assert p.y == 6
 
-    
+def test_introspective_cast_to_json():
+    p = Point(3, 4)
+    assert p.dumps_json()== '{"Point":{"x":3.0,"y":4.0}}'
 
+def test_introspective_cast_from_json():
+    p = Point.loads_json('{"Point":{"x":3.0,"y":4.0}}')
+    assert p.x == 3.0
+    assert p.y == 4.0

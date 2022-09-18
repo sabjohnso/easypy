@@ -11,6 +11,12 @@ namespace easypy::details {
    concept Aggregate = is_aggregate_v<T> && ! Introspective<T>;
 
    template<typename T>
+   concept Convertible_to_json = convertible_to<T, json>;
+
+   template<typename T>
+   concept Convertible_from_json = convertible_to<json, T>;
+
+   template<typename T>
    class_<T>
    bind_type(module_&);
 
@@ -30,6 +36,20 @@ namespace easypy::details {
               ...);
          }
          (make_index_sequence<tuple_size_v<T>>());
+         if constexpr(Convertible_to_json<T>) {
+            cls.def("dumps_json", [](const T& self) {
+               return json(self).dump();
+            });
+         }
+         if constexpr(Convertible_from_json<T>) {
+            cls.def_static(
+              "loads_json",
+              [](const std::string& json_string) {
+                 T result = json::parse(json_string);
+                 return result;
+              });
+         }
+         add_json_conversion(cls);
          return cls;
       }
 
@@ -71,8 +91,40 @@ namespace easypy::details {
                 });
          }
          (make_index_sequence<member_count>());
+         add_json_conversion(cls);
          return cls;
       }
+
+      template<typename T>
+      static void
+      add_json_conversion(class_<T>& cls) {
+         if constexpr(Convertible_to_json<T>) {
+            add_conversion_to_json(cls);
+         }
+         if constexpr(Convertible_from_json<T>) {
+            add_conversion_from_json(cls);
+         }
+      }
+
+      template<typename T>
+      static void
+      add_conversion_to_json(class_<T>& cls) {
+         cls.def("dumps_json", [](const T& self) {
+            return json(self).dump();
+         });
+      }
+
+      template<typename T>
+      static void
+      add_conversion_from_json(class_<T>& cls) {
+         cls.def_static(
+           "loads_json",
+           [](const std::string& json_string) {
+              T result = json::parse(json_string);
+              return result;
+           });
+      }
+
       template<typename T>
       friend class_<T>
       bind_type(type_identity<T>, module_&);

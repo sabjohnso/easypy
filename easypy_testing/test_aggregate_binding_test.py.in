@@ -1,19 +1,23 @@
 import sys
 sys.path.append("${CMAKE_CURRENT_BINARY_DIR}")
 import aggregate_binding_test
+from aggregate_binding_test import Point
 
 def test_aggregate_binding():
-    from aggregate_binding_test import Point
-
     p = Point(3, 4)
-
     assert len(p) == 2
-
     assert p[0] == 3
     assert p[1] == 4
-
     p[0] = 5
     p[1] = 6
-
     assert p[0] == 5
     assert p[1] == 6
+
+def test_aggregate_conversion_to_json():
+    p = Point(3,4)
+    assert p.dumps_json() == '{"Point":[3.0,4.0]}'
+
+def test_aggregate_conversion_to_json():
+    p = Point.loads_json('{"Point":[3.0,4.0]}')
+    assert p[0] == 3.0
+    assert p[1] == 4.0

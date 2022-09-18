@@ -1,6 +1,7 @@
 //
 // ... external header files
 //
+#include <easyj/easyj.hpp>
 #include <introspection/macros.hpp>
 #include <pybind11/pybind11.h>
 
@@ -10,6 +11,9 @@
 #include <easypy/easypy.hpp>
 
 namespace easypy::testing {
+
+   using easyj::from_json;
+   using easyj::to_json;
 
    struct Point {
       double x;

@@ -3,19 +3,21 @@
 //
 // ... standard header files
 //
+#include <concepts>
 #include <string>
 #include <tuple>
 #include <type_traits>
-
 //
 // ... external header files
 //
 #include <introspection/introspection.hpp>
+#include <nlohmann/json.hpp>
 #include <pfr.hpp>
 #include <pybind11/pybind11.h>
 
 namespace easypy::details {
 
+   using std::convertible_to;
    using std::declval;
    using std::get;
    using std::index_sequence;
@@ -40,5 +42,7 @@ namespace easypy::details {
    using pfr::get;
    using pfr::tuple_element_t;
    using pfr::tuple_size_v;
+
+   using nlohmann::json;
 
 } // end of namespace easypy::details
