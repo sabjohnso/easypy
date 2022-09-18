@@ -3,10 +3,21 @@ sys.path.append("${CMAKE_CURRENT_BINARY_DIR}")
 import introspective_binding_test
 from introspective_binding_test import Point
 
-def test_introspective_binding():
+def test_introspective_default_construction():
+    p = Point()
+    assert isinstance(p, Point)
+
+def test_introspective_construction():
+    p = Point(3, 4)
+    assert isinstance(p, Point)
+
+def test_introspective_member_read_access():
     p = Point(3, 4)
     assert p.x == 3
     assert p.y == 4
+
+def test_introspective_member_write_access():
+    p = Point()
     p.x = 5
     p.y = 6
     assert p.x == 5

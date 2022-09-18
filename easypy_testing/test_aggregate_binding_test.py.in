@@ -3,11 +3,24 @@ sys.path.append("${CMAKE_CURRENT_BINARY_DIR}")
 import aggregate_binding_test
 from aggregate_binding_test import Point
 
-def test_aggregate_binding():
-    p = Point(3, 4)
+def test_aggregate_binding_default_construction():
+    p = Point()
+    assert isinstance(p, Point)
     assert len(p) == 2
+
+def test_aggregate_construction():
+    p = Point(3, 4)
+    assert isinstance(p, Point)
+    assert len(p) == 2
+
+
+def test_aggregate_member_read_access():
+    p = Point(3, 4)
     assert p[0] == 3
     assert p[1] == 4
+
+def test_aggregate_member_write_access():
+    p = Point()
     p[0] = 5
     p[1] = 6
     assert p[0] == 5

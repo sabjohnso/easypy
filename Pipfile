@@ -8,7 +8,8 @@ name = "pypi"
 python_version = "3.9"
 
 [packages]
-black = "*"
+
 
 [dev-packages]
 pytest = "*"
+black = "*"

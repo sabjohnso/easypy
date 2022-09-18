@@ -25,6 +25,7 @@ namespace easypy::details {
       static class_<T>
       bind(module_& m) {
          auto cls = class_<T>(m, string{bare_type_name<T>}.c_str());
+         cls.def(init<>());
          [ & ]<auto... Index>(index_sequence<Index...>) {
             cls.def(init<Member_type<T, Index>...>());
             (
@@ -59,7 +60,7 @@ namespace easypy::details {
          class_<T> cls{m, string{bare_type_name<T>}.c_str()};
          constexpr auto member_count = tuple_size_v<T>;
          [ & ]<auto... Index>(index_sequence<Index...>) {
-            cls
+            cls.def(init<>())
               .def(init<remove_cvref_t<decltype(get<Index>(
                      declval<T>()))>...>())
               .def("__len__", [ = ](const T&) { return member_count; })
