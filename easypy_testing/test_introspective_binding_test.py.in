@@ -2,11 +2,17 @@ import sys
 sys.path.append("${CMAKE_CURRENT_BINARY_DIR}")
 import introspective_binding_test
 
-def test_nothing():
+def test_introspective_binding():
     from introspective_binding_test import Point
     p = Point(3, 4);
     assert p.x == 3
     assert p.y == 4
+
+    p.x = 5
+    p.y = 6
+
+    assert p.x == 5
+    assert p.y == 6
 
     
 

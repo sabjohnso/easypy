@@ -21,3 +21,5 @@ endmacro()
 
 easypy_add_test(introspective_binding)
 target_link_libraries(introspective_binding_test PRIVATE introspection::header)
+
+easypy_add_test(aggregate_binding)

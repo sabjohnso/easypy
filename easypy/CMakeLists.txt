@@ -8,8 +8,15 @@ target_include_directories(easypy_header
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${easypy_INSTALL_INCLUDEDIR}>)
 
+target_link_libraries(easypy_header
+  INTERFACE
+  introspection::header
+  easyj::header
+  pfr::header
+  pybind11::headers)
+
 add_library(easypy::header ALIAS easypy_header)
-  
+
 install(TARGETS easypy_header
   EXPORT easypy_EXPORTS
   RUNTIME DESTINATION ${easypy_INSTALL_BINDIR}
