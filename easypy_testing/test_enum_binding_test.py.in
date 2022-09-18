@@ -1,0 +1,13 @@
+import sys
+sys.path.append("${CMAKE_CURRENT_BINARY_DIR}")
+import enum_binding_test
+from enum_binding_test import Colors
+
+def test_enum_binding():
+    assert hasattr(Colors, "red")
+    assert hasattr(Colors, "orange")
+    assert hasattr(Colors, "yellow")
+    assert hasattr(Colors, "green")
+    assert hasattr(Colors, "blue")
+    assert hasattr(Colors, "indigo")
+    assert hasattr(Colors, "violet")

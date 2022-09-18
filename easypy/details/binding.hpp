@@ -21,6 +21,22 @@ namespace easypy::details {
    bind_type(module_&);
 
    class Type_binding {
+
+      template<Introspective_enum T>
+      static enum_<T>
+      bind(module_& m) {
+         enum_<T> en(m, string{bare_type_name<T>}.c_str());
+         [ & ]<auto... Index>(index_sequence<Index...>) {
+            (en.value(
+               string{unqualified_enum_value_names<T>[ Index ]}.c_str(),
+               enum_values<T>[ Index ]),
+             ...);
+         }
+         (make_index_sequence<enum_value_count<T>>());
+
+         return en;
+      }
+
       template<Introspective T>
       static class_<T>
       bind(module_& m) {
@@ -37,19 +53,6 @@ namespace easypy::details {
               ...);
          }
          (make_index_sequence<tuple_size_v<T>>());
-         if constexpr(Convertible_to_json<T>) {
-            cls.def("dumps_json", [](const T& self) {
-               return json(self).dump();
-            });
-         }
-         if constexpr(Convertible_from_json<T>) {
-            cls.def_static(
-              "loads_json",
-              [](const std::string& json_string) {
-                 T result = json::parse(json_string);
-                 return result;
-              });
-         }
          add_json_conversion(cls);
          return cls;
       }

@@ -29,15 +29,20 @@ namespace easypy::details {
 
    using pybind11::cast;
    using pybind11::class_;
+   using pybind11::enum_;
    using pybind11::init;
    using pybind11::module_;
    using pybind11::object;
 
    using introspection::bare_type_name;
+   using introspection::enum_value_count;
+   using introspection::enum_values;
    using introspection::member_name;
    using introspection::member_pointer;
    using introspection::Member_type;
+   using introspection::unqualified_enum_value_names;
    using introspection::concepts::Introspective;
+   using introspection::concepts::Introspective_enum;
 
    using pfr::get;
    using pfr::tuple_element_t;
