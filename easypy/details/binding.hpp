@@ -11,6 +11,10 @@ namespace easypy::details {
    concept Aggregate = is_aggregate_v<T> && ! Introspective<T>;
 
    template<typename T>
+   concept Introspective_or_aggregate =
+     Introspective<T> || Aggregate<T>;
+
+   template<typename T>
    concept Convertible_to_json = convertible_to<T, json>;
 
    template<typename T>
@@ -37,13 +41,38 @@ namespace easypy::details {
          return en;
       }
 
-      template<Introspective T>
+      template<Introspective_or_aggregate T>
       static class_<T>
       bind(module_& m) {
          auto cls = class_<T>(m, string{bare_type_name<T>}.c_str());
+         add_default_constructor(cls);
+         add_constructor(cls);
+         add_fields(cls);
+         add_json_conversion(cls);
+         add_repr(cls);
+         return cls;
+      }
+
+      template<typename T>
+      static void
+      add_default_constructor(class_<T>& cls) {
          cls.def(init<>());
+      }
+
+      template<typename T>
+      static void
+      add_constructor(class_<T>& cls) {
          [ & ]<auto... Index>(index_sequence<Index...>) {
-            cls.def(init<Member_type<T, Index>...>());
+            cls.def(init<remove_cvref_t<decltype(get<Index>(
+                      declval<T>()))>...>());
+         }
+         (make_index_sequence<tuple_size_v<T>>());
+      }
+
+      template<Introspective T>
+      static void
+      add_fields(class_<T>& cls) {
+         [ & ]<auto... Index>(index_sequence<Index...>) {
             (
               [ & ] {
                  cls.def_readwrite(
@@ -53,20 +82,16 @@ namespace easypy::details {
               ...);
          }
          (make_index_sequence<tuple_size_v<T>>());
-         add_json_conversion(cls);
-         return cls;
       }
 
       template<Aggregate T>
-      static class_<T>
-      bind(module_& m) {
-         class_<T> cls{m, string{bare_type_name<T>}.c_str()};
-         constexpr auto member_count = tuple_size_v<T>;
+      static void
+      add_fields(class_<T>& cls) {
          [ & ]<auto... Index>(index_sequence<Index...>) {
-            cls.def(init<>())
-              .def(init<remove_cvref_t<decltype(get<Index>(
-                     declval<T>()))>...>())
-              .def("__len__", [ = ](const T&) { return member_count; })
+            cls
+              .def(
+                "__len__",
+                [ = ](const T&) { return tuple_size_v<T>; })
               .def(
                 "__getitem__",
                 [ = ](const T& self, size_t index) -> decltype(auto) {
@@ -94,9 +119,21 @@ namespace easypy::details {
                    return self;
                 });
          }
-         (make_index_sequence<member_count>());
-         add_json_conversion(cls);
-         return cls;
+         (make_index_sequence<tuple_size_v<T>>());
+      }
+
+      template<typename T>
+      static void
+      add_repr(class_<T>& cls) {
+         if constexpr(Convertible_to_json<T>) {
+            cls
+              .def(
+                "__str__",
+                [](const T& self) { return json(self).dump(2); })
+              .def("__repr__", [](const T& self) {
+                 return json(self).dump(2);
+              });
+         }
       }
 
       template<typename T>
